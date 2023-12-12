@@ -54,28 +54,37 @@ class canival_misionero(Grafo):
             La cantidad de elementos diferentes.
         """
     def cantidad_diferentes(self, lista1, lista2):
-        lista_comunes = []
         lista_diferentes = []
 
-        for elemento in lista1:
-            if elemento in lista2:
-                lista_comunes.append(elemento)
-            else:
-                lista_diferentes.append(elemento)
+        for i, e in enumerate(lista1):
+            for i2, e2 in enumerate(lista2):
+                if i == i2:
+                    if e != e2:
+                        lista_diferentes.append(e2)
 
         return len(lista_diferentes)
+        
+
+        #for i1, elemento1 in enumerate(lista1):
+        
 
     def genera_sucesores(self, nodo):
         hijos = []
         for i in range(128):    # 128 porque son 7 bits
             s = format(i, "07b")    # formato de un string de unos y ceros
+            if nodo == "1000100" and s == "0000010":
+                print(".....")
             if s[0] == nodo[0]: continue    # Si no se ha movido la barca [INCORRECTO]
-            if s[4:].count("0") > s[1:4].count("0"): continue   # Si hay más caníbales en un lado que misioneros [INCORRECTO]
-            if s[4:].count("1") > s[1:4].count("1"): continue   # Si hay más caníbales en el otro lado que misioneros [INCORRECTO]
+            if s[1:4].count("0") > 0 and s[4:].count("0") > s[1:4].count("0"): continue   # Si hay más caníbales en un lado que misioneros [INCORRECTO]
+            if s[1:4].count("1") > 0 and s[4:].count("1") > s[1:4].count("1"): continue   # Si hay más caníbales en el otro lado que misioneros [INCORRECTO]
             if s[1:5] == nodo[1:5]: continue    # Si los que saben remar siguen en el mismo sitio de antes [INCORRECTO]
             if self.cantidad_diferentes(list(s), list(nodo)) not in [3,2] : continue # Si no han cambiado de posicion la barca y 2 personas o 1 [INCORRECTO]
             if self.cantidad_diferentes(list(s[5:]), list(nodo[5:])) == 2: continue  #  Si se mueven 2 canibales que no saben remar [INCORRECTO]
             if self.cantidad_diferentes(list(s[1:6]), list(nodo[1:6])) != 0 and s[0] == nodo[0]: continue # Si alguien cambio de orilla y no lo hizo en la misma direccion que el barco [INCORRECTO]
+            mal = 0
+            for i,v in enumerate(nodo):
+                if v != s[i] and s[i] != s[0]: mal = 1
+            if mal: continue
             if s[0] != nodo[0] and self.cantidad_diferentes(list(s[1:6]), list(nodo[1:6])) == 0: continue # Si sólo se ha movido la barca [INCORRECTO]
             
 
@@ -88,8 +97,9 @@ class canival_misionero(Grafo):
             si cambian más de 2 (además de la barca)
             no se pueden mover uno de los Can NO remadores solo
             """
-
+            
             hijos.append(s)
+        print(F"Nodo {nodo} genera {hijos}")
         return hijos
 
 
