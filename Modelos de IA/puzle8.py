@@ -22,14 +22,26 @@ class PuzleN(Grafo):
         self.lado = int(math.sqrt(np+1))
     
     def es_solucion(self, nodo_actual):
-    # print(f"Procesando nodo: {nodo_actual}")
-        if nodo_actual = "1-2-3-4-5-6-7-8-0": return True
+        print(f"Procesando nodo: {nodo_actual}")
+        if nodo_actual == "1-2-3-4-5-6-7-8-0": return True
         return False
+    
+    # Transforma un nodo en una lista de las filas del puzzle simulando el tablero
+    def crear_matriz(self, nodo):
+        nodo_inicial_matriz = []
+        fila_1_inicial = nodo[0:5].split('-')
+        fila_2_inicial = nodo[6:11].split('-')
+        fila_3_inicial = nodo[12:17].split('-')
+        nodo_inicial_matriz = [fila_1_inicial,fila_2_inicial,fila_3_inicial]
+        return nodo_inicial_matriz
 
     def calcula_distanciaDst(self, nodo, nodo_destino):
-        ###
-        ### ????????? Aquí falta
-        return 0
+        ret = 0
+        nodo_inicial_matriz = self.crear_matriz(nodo)
+        nodo_final_matriz = self.crear_matriz(nodo_destino)
+        print(nodo_inicial_matriz)
+        print(nodo_final_matriz)
+        return ret
 
 
 
@@ -65,7 +77,7 @@ g = PuzleN(8)
 final = "1-2-3-4-5-6-7-8-0"
 inicial = "2-7-0-4-5-3-8-6-1"
 
-#g = PuzleN(15)
+# g = PuzleN(15)
 #final = "1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-0"
 #inicial = "11-3-0-1-10-12-5-13-7-9-4-8-6-15-2-14" # 1121 pasos y  19200 iters en avaricioso
 
@@ -76,10 +88,12 @@ inicial = "2-7-0-4-5-3-8-6-1"
 # g.recorre_grafo("", modo="avaricioso")
 # g.recorre_grafo(ini=inicial, end=final, modo="avaricioso")
 #g.recorre_grafo(nodo_inicial=inicial, nodo_final=final, modo="profundidad")
-ret = g.recorre_grafo(nodo_inicial=inicial, nodo_final=final, modo="avaricioso")
+# ret = g.recorre_grafo(nodo_inicial=inicial, nodo_final=final, modo="avaricioso")
 #ret = g.recorre_grafo(nodo_inicial=inicial, nodo_final=final, modo="avaricioso", max_level = 200)
 
-if ret: 
-    ruta = g.genera_ruta(final)
-    print(f"Encontrada solución en {len(ruta)} pasos:\n{ruta[::-1]}")
-else: print("Se exploró sin encontrar solución")
+# if ret: 
+#    ruta = g.genera_ruta(final)
+#    print(f"Encontrada solución en {len(ruta)} pasos:\n{ruta[::-1]}")
+# else: print("Se exploró sin encontrar solución")
+
+g.calcula_distanciaDst(inicial, final)
