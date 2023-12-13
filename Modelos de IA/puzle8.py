@@ -34,13 +34,28 @@ class PuzleN(Grafo):
         fila_3_inicial = nodo[12:17].split('-')
         nodo_inicial_matriz = [fila_1_inicial,fila_2_inicial,fila_3_inicial]
         return nodo_inicial_matriz
+    
+    def distancia_a_destino(tablero, nodo, destino):
+
+        fila_nodo = tablero.index(nodo)
+        columna_nodo = nodo % 3
+        fila_destino = tablero.index(destino)
+        columna_destino = destino % 3
+
+        distancia = abs(fila_nodo - fila_destino) + abs(columna_nodo - columna_destino)
+
+        return distancia
 
     def calcula_distanciaDst(self, nodo, nodo_destino):
         ret = 0
         nodo_inicial_matriz = self.crear_matriz(nodo)
         nodo_final_matriz = self.crear_matriz(nodo_destino)
-        print(nodo_inicial_matriz)
-        print(nodo_final_matriz)
+
+        for i in range(9):
+            for j in range(3):
+                inicio = 
+                destino = 
+
         return ret
 
 
