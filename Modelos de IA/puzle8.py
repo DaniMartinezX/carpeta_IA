@@ -34,33 +34,51 @@ class PuzleN(Grafo):
         fila_3_inicial = nodo[12:17].split('-')
         nodo_inicial_matriz = [fila_1_inicial,fila_2_inicial,fila_3_inicial]
         return nodo_inicial_matriz
-    
-    def distancia_a_destino(tablero, nodo, destino):
 
-        fila_nodo = tablero.index(nodo)
-        columna_nodo = nodo % 3
-        fila_destino = tablero.index(destino)
-        columna_destino = destino % 3
 
-        distancia = abs(fila_nodo - fila_destino) + abs(columna_nodo - columna_destino)
-
-        return distancia
 
     def calcula_distanciaDst(self, nodo, nodo_destino):
         ret = 0
         nodo_inicial_matriz = self.crear_matriz(nodo)
-        nodo_final_matriz = self.crear_matriz(nodo_destino)
+        nodo_destino_matriz = self.crear_matriz(nodo_destino)
 
-        for i in range(9):
-            for j in range(3):
-                inicio = 
-                destino = 
+        print(nodo_inicial_matriz)
 
+        e = -1
+
+        while e != 8:
+            e += 1
+            for i in nodo_inicial_matriz:
+                numero = str(e)
+                if numero in i:
+                    cordenada = [int(nodo_inicial_matriz.index(i)), int(nodo_inicial_matriz[int(nodo_inicial_matriz.index(i))].index(numero))]
+                    print(f'Número: {e}, coordenada: {cordenada}')
+                    # ret += distancia
+                
+            
+        # for i in range(3):
+            # for e in range(9):
+                # print(e)
+                # if str(e) in nodo_inicial_matriz[i]:
+                    # cordenada_inicial = [i, nodo_inicial_matriz[i].index(str(e))]
+                    # print(cordenada_inicial)
+                    # distancia = abs(cordenada_inicial[0] - cordenada_inicial[1])
+                    # ret += distancia
+                # else: continue
+
+        # ----------------------
+        # lista_nodo_inicial = nodo.split('-')
+        # lista_nodo_final = nodo_destino.split('-')
+# 
+        # print(f'Nodo inicial: {lista_nodo_inicial}')
+        # print(f'Nodo final: {lista_nodo_final}')
+        # 
+        # for i in range(9):
+            # distancia = abs(lista_nodo_inicial.index(str(i)) - lista_nodo_final.index(str(i)))
+            # print(f'Número: {i} -> Distancia: {distancia}')
+            # ret = distancia
+        # ----------------------
         return ret
-
-
-
-
 
 
 
@@ -90,7 +108,7 @@ class PuzleN(Grafo):
  
 g = PuzleN(8)
 final = "1-2-3-4-5-6-7-8-0"
-inicial = "2-7-0-4-5-3-8-6-1"
+inicial = "3-4-2-1-8-0-6-5-7"
 
 # g = PuzleN(15)
 #final = "1-2-3-4-5-6-7-8-9-10-11-12-13-14-15-0"
@@ -103,7 +121,7 @@ inicial = "2-7-0-4-5-3-8-6-1"
 # g.recorre_grafo("", modo="avaricioso")
 # g.recorre_grafo(ini=inicial, end=final, modo="avaricioso")
 #g.recorre_grafo(nodo_inicial=inicial, nodo_final=final, modo="profundidad")
-# ret = g.recorre_grafo(nodo_inicial=inicial, nodo_final=final, modo="avaricioso")
+# ret = g.recorre_grafo(nodo_inicial=inicial, nodo_destino=final, modo="avaricioso") ####
 #ret = g.recorre_grafo(nodo_inicial=inicial, nodo_final=final, modo="avaricioso", max_level = 200)
 
 # if ret: 
@@ -111,4 +129,4 @@ inicial = "2-7-0-4-5-3-8-6-1"
 #    print(f"Encontrada solución en {len(ruta)} pasos:\n{ruta[::-1]}")
 # else: print("Se exploró sin encontrar solución")
 
-g.calcula_distanciaDst(inicial, final)
+g.calcula_distanciaDst(inicial,final)

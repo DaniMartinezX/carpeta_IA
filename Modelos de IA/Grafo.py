@@ -123,6 +123,11 @@ class Grafo(GrafoBase):
     elif modo == "avaricioso":
       # escoger de todos los de abiertos el que tenga menor
       # valor de distanciaDst %%%%%
+      idx_min = 0
+      for i, n in enumerate(self.abiertos):
+          if self.get_node_attribute(n, "distanciaDst") < self.get_node_attribute(self.abiertos[idx_min], "distanciaDst"):
+              idx_min = i
+      ret = self.abiertos.pop(idx_min)
       pass
     elif modo == "A*":
       # escoger la media
