@@ -3,10 +3,7 @@ from Grafo import Grafo
 import numpy as np  
 
 """
-[[4,0], [2, 1], ....]
-
-[4,2,5,2,1,6,7,3] , [3,1,5,5,1,2,7,3]
-
+Generación de damas en un tablero 8x8
 """
 
 class ndamas(Grafo):
@@ -21,6 +18,24 @@ class ndamas(Grafo):
     def es_solucion(self, nodo_actual):
         if nodo_actual == 0: return True
         return False
+
+    def gen_elementos2(self, nelem):
+        pob = []
+        for i in range(nelem):
+
+            # Genero las damas creando una lista con el índice de la fila de cada columna de la matríz donde están
+            elementos = self.genera_nelementos(8)
+            indice = -1
+
+            # Inicializo la matriz con una matriz de 8,8 de ceros
+            jugada = np.zeros((8, 8), dtype=int)
+
+            # Añado una dama en la posición seleccionada
+            for l in elementos:
+                indice += 1
+                jugada[l][indice] = 1
+            pob.append(jugada)
+        return pob
 
     # generar nelem individuos al azar
     def genera_nelementos(self, nelem):
@@ -38,6 +53,50 @@ class ndamas(Grafo):
           contador += 1
       return contador
 
+
+    def v2(self, jugada):
+        num = 8
+        nerrores_jugada = 0
+        # Compruebo errores
+        for x in range(num):
+            for y in range(num):
+                if jugada[x][y] == 1:
+                    unos = 0
+                    # Compruebo eje 'x'
+                    fila = jugada[x]
+                    unos = self.cuantos_unos(fila)
+                    if unos > 1:
+                        nerrores_jugada += 1
+                    
+                    # Compruebo eje 'y'
+                    columna = []
+                    for q in range(8):
+                        columna.append(jugada[q][y])
+                    unos = self.cuantos_unos(columna)
+                    if unos > 1:
+                        nerrores_jugada += 1
+        
+        # Compruebo diagonales
+        diagonal = []
+        diagonal_inversa = []
+
+        ind_diagonal = -8
+        for d in range(15):
+            ind_diagonal += 1
+
+            diagonal = jugada.diagonal(ind_diagonal)
+            diagonal_inversa = np.fliplr(jugada).diagonal(ind_diagonal)
+
+            unos = self.cuantos_unos(diagonal)
+            if unos > 1:
+                nerrores_jugada += 1
+            # print(f'Diagonal {diagonal}, unos: {unos}')
+                unos = self.cuantos_unos(diagonal_inversa)
+            if unos > 1:
+                nerrores_jugada += 1
+        return nerrores_jugada
+
+
     # valora cuantos errores tiene la posición
     # 0 es ningún error, cualquier otro valor es positivo
     def valora_errores_posicion(self, num):#pos
@@ -45,7 +104,7 @@ class ndamas(Grafo):
       nerrores_jugada = 0
       
       # Creación de jugada
-      for i in range(100):
+      for i in range(1000):
         # Añado errores a errores acomulados
         nerrores += nerrores_jugada
         # Reinicio la variables de los errores de cada jugada
@@ -118,9 +177,7 @@ class ndamas(Grafo):
         print(f'{nerrores} errores acomulados')
         print()
 
-      print(f'\nPOBLACION {len(self.poblacion)}:\n{self.poblacion}\nErrores TOP:{self.errores_poblacion}')
       return nerrores
-
 
 # Generar una población inicial
 # durante un número máximo de iteraciones:
@@ -134,3 +191,26 @@ g = ndamas(8)
 g.genera_nelementos(8)
 num = g.valora_errores_posicion(8)
 
+# g = ndamas(8)
+pob = g.gen_elementos2(100)
+iter = 0
+for iter in range(1000):
+   pob.sort(key = g.v2)
+  #  mirar si pob[0] es solucion y break
+   if g.v2(pob[0]) == 0:
+      print(f"Solución: \n{pob[0]}")
+      break
+   pob = pob[:1000]
+  #  generar hijos
+   lg = len(pob)/2
+   for i in range(int(lg)):
+      el1 = pob[2*i]
+      el2 = pob[2*i + 1]
+      # hijo 
+      A, B = np.hsplit(el1, 2)  # Se parte a la mitad la matriz
+      C, D = np.hsplit(el2, 2)
+      hijo = np.concatenate((A,D), axis=1)  # Se concatenan por columnas
+      pob.append(hijo)  # Se añade hijo a la población
+      hijo2 = np.concatenate((B,C), axis=1)
+      pob.append(hijo2)
+print("Fin")

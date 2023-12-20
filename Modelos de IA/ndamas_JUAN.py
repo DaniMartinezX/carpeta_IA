@@ -22,24 +22,6 @@ class ndamas(Grafo):
         if nodo_actual == 0: return True
         return False
 
-    def gen_elementos2(self, nelem):
-        pob = []
-        for i in range(nelem):
-
-            # Genero las damas creando una lista con el índice de la fila de cada columna de la matríz donde están
-            elementos = self.genera_nelementos(8)
-            indice = -1
-
-            # Inicializo la matriz con una matriz de 8,8 de ceros
-            jugada = np.zeros((8, 8), dtype=int)
-
-            # Añado una dama en la posición seleccionada
-            for l in elementos:
-                indice += 1
-                jugada[l][indice] = 1
-        pob.append(jugada)
-        return pob
-
     # generar nelem individuos al azar
     def genera_nelementos(self, nelem):
       elementos = []
@@ -55,50 +37,6 @@ class ndamas(Grafo):
         if i == 1:
           contador += 1
       return contador
-
-
-    def v2(self, jugada):
-        num = 8
-        nerrores_jugada = 0
-        # Compruebo errores
-        for x in range(num):
-            for y in range(num):
-                if jugada[x][y] == 1:
-                    unos = 0
-                    # Compruebo eje 'x'
-                    fila = jugada[x]
-                    unos = self.cuantos_unos(fila)
-                    if unos > 1:
-                        nerrores_jugada += 1
-                    
-                    # Compruebo eje 'y'
-                    columna = []
-                    for q in range(8):
-                        columna.append(jugada[q][y])
-                    unos = self.cuantos_unos(columna)
-                    if unos > 1:
-                        nerrores_jugada += 1
-        
-        # Compruebo diagonales
-        diagonal = []
-        diagonal_inversa = []
-
-        ind_diagonal = -8
-        for d in range(15):
-            ind_diagonal += 1
-
-            diagonal = jugada.diagonal(ind_diagonal)
-            diagonal_inversa = np.fliplr(jugada).diagonal(ind_diagonal)
-
-            unos = self.cuantos_unos(diagonal)
-            if unos > 1:
-                nerrores_jugada += 1
-            # print(f'Diagonal {diagonal}, unos: {unos}')
-                unos = self.cuantos_unos(diagonal_inversa)
-            if unos > 1:
-                nerrores_jugada += 1
-        return nerrores_jugada
-
 
     # valora cuantos errores tiene la posición
     # 0 es ningún error, cualquier otro valor es positivo
@@ -195,19 +133,4 @@ class ndamas(Grafo):
 g = ndamas(8)
 g.genera_nelementos(8)
 num = g.valora_errores_posicion(8)
-
-g = ndamas(8)
-pob = g.gen_elementos2(100)
-iter = 0
-for iter in range(100):
-   pob.sort(key = g.v2)
-   # mirar si pob[0] es solucion y break
-   pob = pob[:100]
-   #generar hijos
-   lg = len(pob)/2
-   for i in range(lg):
-      el1 = pob[2*i]
-      el2 = pob[2*i + 1]
-      hijo 
-
 
