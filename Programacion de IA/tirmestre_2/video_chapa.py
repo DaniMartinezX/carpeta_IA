@@ -13,11 +13,9 @@ def click_raton(event, x, y, flags, param):
 
 
 def croma(img1, video):
-    # Carga la foto de fondo
-    fondo = cv.imread(img1)
-    # Carga el video
-    video = cv.VideoCapture(video)
-
+    b,g,r = img1
+    color_punto = np.uint8([[[b, g, r]]])
+    color_punto = cv.cvtColor(color_punto, cv.COLOR_BGR2HSV)
     # Se definen los rangos de color a reemplazar
     color_minimo = np.array([color_punto[0,0,0] - 10,10,10])
     color_maximo = np.array([color_punto[0,0,0] + 10,255,255])
@@ -37,7 +35,7 @@ def croma(img1, video):
         # Aplica la máscara al video
         frame = cv.bitwise_and(frame, frame, mask=mascara)
         # Pega la foto de fondo al video
-        frame = cv.bitwise_or(frame, fondo, mask=mascara)
+        frame = cv.bitwise_or(frame, img1, mask=mascara)
         # Muestra el frame
         cv.imshow("Video", frame)
 
@@ -45,32 +43,58 @@ def croma(img1, video):
 #video = cv.VideoCapture(0)
 fichero = "Programacion de IA\\tirmestre_2\\imagenes\\video_chapa.mp4"
 video = cv.VideoCapture(0)
-cv.namedWindow("Salida")
-cv.setMouseCallback("Salida", click_raton)
+cv.namedWindow("Frame")
+cv.setMouseCallback("Frame", click_raton)
 
 
 
-
+ 
 color_punto = None
+todo_preparado = False
 
-while(True):
+while(True): 
     ret, frame = video.read()
     if color_punto is not None:
         hsv = cv.cvtColor(frame, cv.COLOR_BGR2HSV)
 
+        color_minimo = np.array([color_punto[0,0,0] - 10,10,10])
+        color_maximo = np.array([color_punto[0,0,0] + 10,255,255])
+
+        click_raton
+
         mascara = cv.inRange(hsv, color_minimo, color_maximo)
         cv.namedWindow("Mascara")
+        cv.setMouseCallback("Mascara", click_raton)
+        
         cv.imshow("Mascara", mascara)
-        color_punto = None
     if ret == True:
         frame = cv.flip(frame, 1)
-        cv.imshow("Salida", frame)
+        cv.imshow("Frame", frame)
     if cv.waitKey(10) & 0xFF == 32:
         # Captura el frame actual
         captura = frame.copy()
-        # Si existe captura se ejecuta el croma
-        if cv.countNonZero(captura) > 0:
-            croma(captura, frame)
+        cv.namedWindow("Cap")
+        cv.imshow("Cap", captura)
+        todo_preparado = True
+        print("Debería de haber sacado a captura ")
+    if todo_preparado:                
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        color_minimo = np.array([color_punto[0,0,0] - 10,10,10])
+        color_maximo = np.array([color_punto[0,0,0] + 10,255,255])
+
+        mascara1 = cv.inRange(gray, color_minimo, color_maximo)
+        mascara2 = cv.inRange(gray, color_minimo, color_maximo)
+        mascara3 = cv.inRange(gray, color_minimo, color_maximo)
+
+        mascara_final = cv.merge(mascara1, mascara2, mascara3)
+        
+        fondo_mascara = cv.bitwise_and(captura, mascara_final)
+        no_mask = cv.bitwise_not(mascara_final)
+        frame_nomask = cv.bitwise_and(frame, no_mask, mask=mascara)
+        final = cv.bitwise_or(frame_nomask, fondo_mascara, mask=mascara)
+        cv.imshow("Final", final)   
+
     if cv.waitKey(10) & 0xFF == 27: break
 video.release()
 cv.destroyAllWindows()
+       
