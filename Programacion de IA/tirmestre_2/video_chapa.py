@@ -40,12 +40,14 @@ def croma(img1, video):
         cv.imshow("Video", frame)
 
 
-#video = cv.VideoCapture(0)
 fichero = "Programacion de IA\\tirmestre_2\\imagenes\\video_chapa.mp4"
 video = cv.VideoCapture(0)
 cv.namedWindow("Frame")
 cv.setMouseCallback("Frame", click_raton)
 
+cv.namedWindow("Mascara")
+cv.namedWindow("Cap")
+cv.namedWindow("Final")
 
 
  
@@ -63,35 +65,37 @@ while(True):
         click_raton
 
         mascara = cv.inRange(hsv, color_minimo, color_maximo)
-        cv.namedWindow("Mascara")
         cv.setMouseCallback("Mascara", click_raton)
         
         cv.imshow("Mascara", mascara)
+        todo_preparado = True
     if ret == True:
-        frame = cv.flip(frame, 1)
         cv.imshow("Frame", frame)
     if cv.waitKey(10) & 0xFF == 32:
         # Captura el frame actual
         captura = frame.copy()
-        cv.namedWindow("Cap")
         cv.imshow("Cap", captura)
-        todo_preparado = True
         print("Debería de haber sacado a captura ")
-    if todo_preparado:                
-        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
-        color_minimo = np.array([color_punto[0,0,0] - 10,10,10])
-        color_maximo = np.array([color_punto[0,0,0] + 10,255,255])
+    if todo_preparado:         
 
-        mascara1 = cv.inRange(gray, color_minimo, color_maximo)
-        mascara2 = cv.inRange(gray, color_minimo, color_maximo)
-        mascara3 = cv.inRange(gray, color_minimo, color_maximo)
+        # tenemos una imagen de fondo(fondo), una del momento actual(img) y una máscara(mask)
+        # proceso:
+        # final =  (img AND (NOT mask)) OR (fondo AND mask)
 
-        mascara_final = cv.merge(mascara1, mascara2, mascara3)
+        # De esta forma crea una máscara de 3 canales
+        # mask2 = cv.merge([mascara,mascara,mascara])
+
+        #fondo AND mask
+        fondo_and_mask = cv.bitwise_and(captura, captura, mask=mascara)
+
+        #Invertir la máscara
+        not_mask = cv.bitwise_not(mascara)
+
+        # imagen actual and no_mask
+        img_and_not_mask = cv.bitwise_and(frame, frame, mask=not_mask)
         
-        fondo_mascara = cv.bitwise_and(captura, mascara_final)
-        no_mask = cv.bitwise_not(mascara_final)
-        frame_nomask = cv.bitwise_and(frame, no_mask, mask=mascara)
-        final = cv.bitwise_or(frame_nomask, fondo_mascara, mask=mascara)
+        # ahora mezclamos esta imagen con la del fondo_con_mascara
+        final = cv.bitwise_or(img_and_not_mask, fondo_and_mask)
         cv.imshow("Final", final)   
 
     if cv.waitKey(10) & 0xFF == 27: break
